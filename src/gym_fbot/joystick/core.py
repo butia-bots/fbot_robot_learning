@@ -4,3 +4,6 @@ class BaseJoystick:
     
     def get_button_value(self, button: int)->bool:
         raise NotImplementedError()
+
+    def init(self):
+        raise NotImplementedError()

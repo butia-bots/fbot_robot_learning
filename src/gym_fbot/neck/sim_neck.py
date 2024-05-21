@@ -1,5 +1,5 @@
 from numpy import ndarray
-from neck.core import BaseDorisNeck
+from gym_fbot.neck.core import BaseDorisNeck
 import rospy
 from std_msgs.msg import Float64
 from sensor_msgs.msg import JointState
@@ -10,7 +10,8 @@ class SimNeck(BaseDorisNeck):
         super(SimNeck, self).__init__()
         self.horizontal_neck_pub = rospy.Publisher('/doris_head/head_pan_position_controller/command', Float64)
         self.vertical_neck_pub = rospy.Publisher('/doris_head/head_tilt_position_controller/command', Float64)
-        self.joint_states = rospy.Subscriber('/doris_head/joint_state', JointState, self._update_joint_state_msg)
+        self.joint_states = rospy.Subscriber('/doris_head/joint_states', JointState, self._update_joint_state_msg)
+        rospy.wait_for_message('/doris_head/joint_states', JointState)
 
     def _update_joint_state_msg(self, msg: JointState):
         self.joint_state_msg = msg

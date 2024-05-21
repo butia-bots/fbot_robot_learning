@@ -1,4 +1,4 @@
-from camera.core import BaseDorisCamera
+from gym_fbot.camera.core import BaseDorisCamera
 import rospy
 from sensor_msgs.msg import Image
 import ros_numpy
@@ -8,7 +8,8 @@ import numpy as np
 class DepthCamera(BaseDorisCamera):
     def __init__(self) -> None:
         super(DepthCamera, self).__init__()
-        self.camera_sub = rospy.Subscriber('/butia_vision/bvb/image_depth', Image, self._update_image_msg)
+        self.camera_sub = rospy.Subscriber('/camera/depth/image_raw', Image, self._update_image_msg)
+        rospy.wait_for_message('/camera/depth/image_raw', Image)
 
     def _update_image_msg(self, msg: Image):
         self.image_msg = msg
