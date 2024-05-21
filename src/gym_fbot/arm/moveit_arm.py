@@ -77,7 +77,7 @@ class MoveItArm(BaseDorisArm):
         traj_point.effort = [20.0,]*len(traj_point.positions)
         #traj_point.velocities = [0.125*np.pi,]*len(traj_point.positions)
         #traj_point.accelerations = [0.25*np.pi,]*len(traj_point.positions)
-        traj_point.time_from_start = rospy.Duration(1/10.0)
+        traj_point.time_from_start = rospy.Duration(1/50.0)
         trajectory.points = [traj_point,]
         self.trajectory_controller.publish(trajectory)
 
