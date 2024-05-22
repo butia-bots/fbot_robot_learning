@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+    <node pkg="fbot_robot_learning" type="skill_inference_server.py" name="skill_inference_server">
+        <rosparam file="$(find fbot_robot_learning)/config/skill_inference_server.yaml" command="load" />
+    </node>
+</launch>
