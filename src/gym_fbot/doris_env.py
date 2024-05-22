@@ -9,7 +9,6 @@ from gym_fbot.mobile_base.core import BaseDorisMobileBase
 from gym_fbot.neck.core import BaseDorisNeck
 from gym_fbot.joystick.core import BaseJoystick
 from collections import namedtuple
-import pygame
 import math
 import rospy
 
