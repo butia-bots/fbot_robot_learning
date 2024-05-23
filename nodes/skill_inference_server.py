@@ -62,3 +62,8 @@ class SkillInferenceServer:
             obs, _, _, _, _ = env.step(action)
         res = ExecutePolicyResponse()
         return res
+
+if __name__ == '__main__':
+    rospy.init_node('skill_inference_server', anonymous=True)
+    server = SkillInferenceServer()
+    rospy.spin()

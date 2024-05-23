@@ -16,11 +16,14 @@ import cv2
 
 class DorisGazeboEnv(DorisEnv):
     def __init__(self, **kwargs) -> None:
-        rospy.init_node('doris_gazebo_env', anonymous=True)
+        try:
+            rospy.init_node('doris_gazebo_env', anonymous=True)
+        except rospy.ROSException:
+            pass
         super(DorisGazeboEnv, self).__init__()
         self.arm = MoveItArm()
-        self.rgb_camera = RGBCamera(topic="/camera/color/image_raw")
-        self.wrist_rgb_camera = RGBCamera(topic="/doris_arm/camera/color/image_raw")
+        self.rgb_camera = RGBCamera(topic="/butia_vision/bvb/image_rgb")
+        #self.wrist_rgb_camera = RGBCamera(topic="/doris_arm/camera/color/image_raw")
         self.depth_camera = DepthCamera()
         self.gripper = MoveItGripper()
         self.mobile_base = NavStackMobileBase()

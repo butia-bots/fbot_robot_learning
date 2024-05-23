@@ -51,7 +51,7 @@ class DorisEnv(Env):
         self.arm = BaseDorisArm()
         self.rgb_camera = BaseDorisCamera()
         self.depth_camera = BaseDorisCamera()
-        self.wrist_rgb_camera = BaseDorisCamera()
+        #self.wrist_rgb_camera = BaseDorisCamera()
         self.gripper = BaseDorisGripper()
         self.mobile_base = BaseDorisMobileBase()
         self.neck = BaseDorisNeck()
@@ -64,7 +64,8 @@ class DorisEnv(Env):
         return self.rgb_camera.get_camera_img()
 
     def get_image_wrist(self)->np.ndarray:
-        return self.wrist_rgb_camera.get_camera_img()
+        #return self.wrist_rgb_camera.get_camera_img()
+        return np.zeros(shape=(480,640,3), dtype=np.uint8)
     
     def get_depth_primary(self)->np.ndarray:
         return self.depth_camera.get_camera_img()
@@ -110,8 +111,8 @@ class DorisEnv(Env):
     
     def reset(self, *, seed: int | None = None, options: dict | None = None) -> Tuple[dict[str, np.ndarray] | dict]:
         self.arm_pose = np.array([0.3, 0.0, 0.3, 0.0, 0.0, 0.0])
-        self.arm.set_arm_joints(self.arm.compute_ik(self.arm_pose))
-        self.gripper.set_gripper_opening(0.1)
+        #self.arm.set_arm_joints(self.arm.compute_ik(self.arm_pose))
+        #self.gripper.set_gripper_opening(0.1)
         self.neck.set_angles(np.array([0.0, 0.0]))
         self.mobile_base.set_mobile_base_vel(np.array([0.0, 0.0]))
         rospy.Rate(0.5).sleep()
