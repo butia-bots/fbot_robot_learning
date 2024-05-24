@@ -1,0 +1,5 @@
+policies:
+  - name: move tin can to lower shelf
+    description: move a tin can from the top shelf to the bottom shelf
+    repo_id: crislmfroes/act_doris_gazebo_organize_shelf
+    max_steps: 600
