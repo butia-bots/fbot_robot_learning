@@ -1,6 +1,6 @@
 from numpy import ndarray
 import numpy as np
-from gym_fbot.arm.core import BaseDorisArm
+from fbot_robot_learning.arm.core import BaseDorisArm
 from moveit_commander.move_group import MoveGroupCommander
 from moveit_msgs.srv import GetPositionIK, GetPositionIKRequest, GetPositionIKResponse
 from geometry_msgs.msg import PoseStamped

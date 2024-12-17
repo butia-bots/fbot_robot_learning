@@ -1,5 +1,5 @@
 from numpy import ndarray
-from gym_fbot.mobile_base.core import BaseDorisMobileBase
+from fbot_robot_learning.mobile_base.core import BaseDorisMobileBase
 from actionlib.simple_action_client import SimpleActionClient
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from tf.transformations import quaternion_from_euler, euler_from_quaternion

@@ -1,4 +1,4 @@
-from gym_fbot.joystick.core import BaseJoystick
+from fbot_robot_learning.joystick.core import BaseJoystick
 from sensor_msgs.msg import Joy
 import rospy
 

@@ -1,4 +1,4 @@
-from gym_fbot.gripper.core import BaseDorisGripper
+from fbot_robot_learning.gripper.core import BaseDorisGripper
 from moveit_commander.move_group import MoveGroupCommander
 import numpy as np
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint

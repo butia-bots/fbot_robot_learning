@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 3.5)
 project(fbot_robot_learning)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
@@ -7,16 +7,16 @@ project(fbot_robot_learning)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS message_generation std_msgs)
+find_package(ament_cmake REQUIRED)
+
+find_package(rclpy REQUIRED)               # Para o Python
+find_package(std_msgs REQUIRED)            # Para mensagens padrões
+
+find_package(rosidl_default_generators REQUIRED)  # Para gerar mensagens e serviços
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
-
-## Uncomment this if the package has a setup.py. This macro ensures
-## modules and global scripts declared therein get installed
-## See http://ros.org/doc/api/catkin/html/user_guide/setup_dot_py.html
-catkin_python_setup()
 
 ################################################
 ## Declare ROS messages, services and actions ##
@@ -42,30 +42,13 @@ catkin_python_setup()
 ##   * uncomment the generate_messages entry below
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
-## Generate messages in the 'msg' folder
-add_message_files(
-  FILES
-  PolicyInfo.msg
-)
-
-## Generate services in the 'srv' folder
-add_service_files(
-  FILES
-  GetAvailablePolicies.srv
-  ExecutePolicy.srv
-)
-
-## Generate actions in the 'action' folder
-# add_action_files(
-#   FILES
-#   Action1.action
-#   Action2.action
-# )
-
-## Generate added messages and services with any dependencies listed here
-generate_messages(
-  DEPENDENCIES
-  std_msgs  # Or other packages containing msgs
+# Definir os arquivos de mensagens, serviços e ações
+# Adicione os arquivos de mensagem .msg
+rosidl_generate_interfaces(${PROJECT_NAME}_interfaces
+  "msg/PolicyInfo.msg"
+  "srv/GetAvailablePolicies.srv"
+  "srv/ExecutePolicy.srv"
+  DEPENDENCIES std_msgs  # Dependência de mensagens que você usa
 )
 
 ################################################
@@ -97,12 +80,12 @@ generate_messages(
 ## LIBRARIES: libraries you create in this project that dependent projects also need
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
-catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES fbot_robot_learning
-#  CATKIN_DEPENDS other_catkin_pkg
-#  DEPENDS system_lib
-)
+
+# Dependências do Python
+ament_python_install_package(${PROJECT_NAME})  # Para pacotes Python
+
+
+ament_package()
 
 ###########
 ## Build ##

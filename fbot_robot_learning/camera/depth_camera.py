@@ -1,4 +1,4 @@
-from gym_fbot.camera.core import BaseDorisCamera
+from fbot_robot_learning.camera.core import BaseDorisCamera
 import rospy
 from sensor_msgs.msg import Image
 import ros_numpy

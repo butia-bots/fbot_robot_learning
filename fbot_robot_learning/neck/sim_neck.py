@@ -1,5 +1,5 @@
 from numpy import ndarray
-from gym_fbot.neck.core import BaseDorisNeck
+from fbot_robot_learning.neck.core import BaseDorisNeck
 import rospy
 from std_msgs.msg import Float64
 from sensor_msgs.msg import JointState
