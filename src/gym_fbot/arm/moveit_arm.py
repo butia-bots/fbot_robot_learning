@@ -13,11 +13,11 @@ from moveit_msgs.msg import MoveItErrorCodes
 class MoveItArm(BaseDorisArm):
     def __init__(self) -> None:
         super(MoveItArm, self).__init__()
-        self.move_group = MoveGroupCommander('arm', robot_description='doris_arm/robot_description', ns='/doris_arm')
-        self.move_group.set_pose_reference_frame('doris_arm/base_link')
-        self.compute_ik_proxy = rospy.ServiceProxy('/doris_arm/compute_ik', GetPositionIK)
+        self.move_group = MoveGroupCommander('arm', robot_description='wx200/robot_description', ns='/wx200')
+        self.move_group.set_pose_reference_frame('wx200/base_link')
+        self.compute_ik_proxy = rospy.ServiceProxy('/wx200/compute_ik', GetPositionIK)
         self.arm_joints = ['waist', 'shoulder', 'elbow', 'wrist_angle', 'wrist_rotate']
-        self.trajectory_controller = rospy.Publisher('/doris_arm/arm_controller/command', JointTrajectory)
+        self.trajectory_controller = rospy.Publisher('/wx200/arm_controller/command', JointTrajectory)
 
     def compute_ik(self, pose: ndarray)->ndarray:
         ps = PoseStamped()

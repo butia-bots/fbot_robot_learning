@@ -23,7 +23,7 @@ class DorisEnv(Env):
         self.action_space = Box(
             low=self.action_min,
             high=self.action_max,
-            shape=(10,),
+            shape=(6,),
             dtype=float
         )
         self.observation_space = Dict({
@@ -34,38 +34,38 @@ class DorisEnv(Env):
                                 shape=(480, 640, 3),
                                 dtype=np.uint8
                             ),
-                "wrist": Box(
-                                low=0,
-                                high=255,
-                                shape=(480, 640, 3),
-                                dtype=np.uint8
-                            ),
+                #"wrist": Box(
+                #                low=0,
+                #                high=255,
+                #                shape=(480, 640, 3),
+                #                dtype=np.uint8
+                #            ),
             }),
             "agent_pos": Box(
                 low=self.proprio_min,
                 high=self.proprio_max,
-                shape=(10,),
+                shape=(6,),
                 dtype=float
             )
         })
         self.arm = BaseDorisArm()
         self.rgb_camera = BaseDorisCamera()
-        self.depth_camera = BaseDorisCamera()
+        #self.depth_camera = BaseDorisCamera()
         #self.wrist_rgb_camera = BaseDorisCamera()
         self.gripper = BaseDorisGripper()
-        self.mobile_base = BaseDorisMobileBase()
-        self.neck = BaseDorisNeck()
+        #self.mobile_base = BaseDorisMobileBase()
+        #self.neck = BaseDorisNeck()
         self.joystick = BaseJoystick()
         self.rate = rospy.Rate(50.0)
         self.last_action = np.zeros(shape=self.action_space.shape)
-        self.arm_pose = np.array([0.25, 0.0, 0.0, 0.0, 0.0, 0.0])
+        self.arm_pose = np.array([0.3, 0.0, 0.3, 0.0, 0.0, 0.0])
     
     def get_image_primary(self)->np.ndarray:
         return self.rgb_camera.get_camera_img()
 
     def get_image_wrist(self)->np.ndarray:
-        #return self.wrist_rgb_camera.get_camera_img()
-        return np.zeros(shape=(480,640,3), dtype=np.uint8)
+        return self.wrist_rgb_camera.get_camera_img()
+        #return np.zeros(shape=(480,640,3), dtype=np.uint8)
     
     def get_depth_primary(self)->np.ndarray:
         return self.depth_camera.get_camera_img()
@@ -74,8 +74,8 @@ class DorisEnv(Env):
         return np.concatenate([
             self.arm.get_arm_joints(),
             np.array([self.gripper.get_gripper_opening()]),
-            self.mobile_base.get_mobile_base_vel(),
-            self.neck.get_angles()
+            #self.mobile_base.get_mobile_base_vel(),
+            #self.neck.get_angles()
         ])
     
     def render(self, mode='rgb_array'):
@@ -86,7 +86,7 @@ class DorisEnv(Env):
         return {
             "pixels": {
                 "top": self.get_image_primary(),
-                "wrist": self.get_image_wrist(),
+                #"wrist": self.get_image_wrist(),
             },
             #"depth_primary": self.get_depth_primary(),
             "agent_pos": self.get_proprio()
@@ -99,12 +99,12 @@ class DorisEnv(Env):
         self.arm.set_arm_joints(action[:5])
         self.gripper.set_gripper_opening(action[5])
         #self.mobile_base.set_mobile_base_pose(action[7:10])
-        if abs(action[6]) < 0.5:
-            action[6] = 0.0
-        if abs(action[7]) < 0.5:
-            action[7] = 0.0
-        self.mobile_base.set_mobile_base_vel(action[6:8])
-        self.neck.set_angles(action[8:10])
+        #if abs(action[6]) < 0.5:
+        #    action[6] = 0.0
+        #if abs(action[7]) < 0.5:
+        #    action[7] = 0.0
+        #self.mobile_base.set_mobile_base_vel(action[6:8])
+        #self.neck.set_angles(action[8:10])
         self.rate.sleep()
         #self.mobile_base.set_mobile_base_vel(np.array([0.0, 0.0]))
         return self.get_obs(), 0.0, False, False, {}
@@ -113,20 +113,20 @@ class DorisEnv(Env):
         self.arm_pose = np.array([0.3, 0.0, 0.3, 0.0, 0.0, 0.0])
         #self.arm.set_arm_joints(self.arm.compute_ik(self.arm_pose))
         #self.gripper.set_gripper_opening(0.1)
-        self.neck.set_angles(np.array([0.0, 0.0]))
-        self.mobile_base.set_mobile_base_vel(np.array([0.0, 0.0]))
+        #self.neck.set_angles(np.array([0.0, 0.0]))
+        #self.mobile_base.set_mobile_base_vel(np.array([0.0, 0.0]))
         rospy.Rate(0.5).sleep()
         return self.get_obs(), {}
     
     def teleop(self):
         self.joystick.init()
-        self.controller_state = 'base_neck'
+        self.controller_state = 'arm_gripper'
         def act():
             action = self.last_action.copy()
-            if self.joystick.get_axis_value(axis=2) == 1.0:
-                self.controller_state = "base_neck"
-            if self.joystick.get_axis_value(axis=5) == 1.0:
-                self.controller_state = "arm_gripper"
+            #if self.joystick.get_axis_value(axis=2) == 1.0:
+            #    self.controller_state = "base_neck"
+            #if self.joystick.get_axis_value(axis=5) == 1.0:
+            #    self.controller_state = "arm_gripper"
             if self.controller_state == 'arm_gripper':
                 new_arm_pose = self.arm_pose.copy()
                 new_arm_pose[0] += 0.01 * self.joystick.get_axis_value(axis=1)
@@ -143,25 +143,25 @@ class DorisEnv(Env):
                     action[5] += 0.01
                 if self.joystick.get_button_value(button=1):
                     action[5] -= 0.01
-            if self.controller_state == 'base_neck':
-                angular = self.joystick.get_axis_value(axis=0)
-                linear = self.joystick.get_axis_value(axis=1)
-                if abs(linear) > abs(angular) + 0.05:
-                    action[6] = linear
-                    action[7] = 0.0
-                elif abs(angular) > abs(linear) + 0.05:
-                    action[6] = 0.0
-                    action[7] = angular
-                else:
-                    action[6] = 0.0
-                    action[7] = 0.0
-                action[8] += 0.05 * self.joystick.get_axis_value(axis=3)
-                action[9] += 0.05 * self.joystick.get_axis_value(axis=4)
-            else:
-                action[6] = 0.0
-                action[7] = 0.0
+            #if self.controller_state == 'base_neck':
+            #    angular = self.joystick.get_axis_value(axis=0)
+            #    linear = self.joystick.get_axis_value(axis=1)
+            #    if abs(linear) > abs(angular) + 0.05:
+            #        action[6] = linear
+            #        action[7] = 0.0
+            #    elif abs(angular) > abs(linear) + 0.05:
+            #        action[6] = 0.0
+            #        action[7] = angular
+            #    else:
+            #        action[6] = 0.0
+            #        action[7] = 0.0
+            #    action[8] += 0.05 * self.joystick.get_axis_value(axis=3)
+            #    action[9] += 0.05 * self.joystick.get_axis_value(axis=4)
+            #else:
+            #    action[6] = 0.0
+            #    action[7] = 0.0
             action = np.clip(action, self.action_min, self.action_max)
-            if np.allclose(self.last_action, action) and action[6] == 0.0 and action[7] == 0.0:
+            if np.allclose(self.last_action, action):# and action[6] == 0.0 and action[7] == 0.0:
                 self.last_action = action
                 return action, False
             else:

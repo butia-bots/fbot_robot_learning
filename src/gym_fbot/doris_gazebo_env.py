@@ -22,12 +22,12 @@ class DorisGazeboEnv(DorisEnv):
             pass
         super(DorisGazeboEnv, self).__init__()
         self.arm = MoveItArm()
-        self.rgb_camera = RGBCamera(topic="/butia_vision/bvb/image_rgb")
+        self.rgb_camera = RGBCamera(topic="/camera/camera/color/image_raw")
         #self.wrist_rgb_camera = RGBCamera(topic="/doris_arm/camera/color/image_raw")
-        self.depth_camera = DepthCamera()
+        #self.depth_camera = DepthCamera()
         self.gripper = MoveItGripper()
-        self.mobile_base = NavStackMobileBase()
-        self.neck = SimNeck()
+        #self.mobile_base = NavStackMobileBase()
+        #self.neck = SimNeck()
         self.joystick = ROSJoystick()
 
 dataset_path = '/home/cris/catkin_ws/src/fbot_gym/data/aloha_doris_gazebo_organize_shelf_raw'
@@ -39,19 +39,19 @@ def save_to_dataset(data: list, episode_id: int):
     encode_params = [int(cv2.IMWRITE_JPEG_QUALITY), 50]
     image_primary = [cv2.imencode('.jpg', d['obs']['pixels']['top'], encode_params)[1] for d in data]
     max_len_primary = max(len(img) for img in image_primary)
-    image_wrist = [cv2.imencode('.jpg', d['obs']['pixels']['wrist'], encode_params)[1] for d in data]
-    max_len_wrist = max(len(img) for img in image_wrist)
+    #image_wrist = [cv2.imencode('.jpg', d['obs']['pixels']['wrist'], encode_params)[1] for d in data]
+    #max_len_wrist = max(len(img) for img in image_wrist)
     with h5py.File(path, 'w') as data:
         data.create_dataset('/action', shape=actions.shape, dtype=actions.dtype, data=actions)
         data.create_dataset('/observations/qpos', shape=qpos.shape, dtype=qpos.dtype, data=qpos)
         #TODO: get joint velocities from the robot
         data.create_dataset('/observations/qvel', shape=qpos.shape, dtype=qpos.dtype, data=np.zeros_like(qpos))
         data.create_dataset('/observations/images/top', shape=(len(image_primary), max_len_primary), dtype=np.uint8)
-        data.create_dataset('/observations/images/wrist', shape=(len(image_wrist), max_len_wrist), dtype=np.uint8)
+        #data.create_dataset('/observations/images/wrist', shape=(len(image_wrist), max_len_wrist), dtype=np.uint8)
         for i, img in enumerate(image_primary):
             data['/observations/images/top'][i,:len(img)] = img
-        for i, img in enumerate(image_wrist):
-            data['/observations/images/wrist'][i,:len(img)] = img
+        #for i, img in enumerate(image_wrist):
+        #    data['/observations/images/wrist'][i,:len(img)] = img
 key = ''
 
 def main(stdscr):
@@ -103,7 +103,7 @@ def main(stdscr):
         if changed == True:
             obs, _, _, _, _ = env.step(action)
         cv2.imshow('Top Camera', cv2.cvtColor(obs['pixels']['top'], cv2.COLOR_RGB2BGR))
-        cv2.imshow('Wrist Camera', cv2.cvtColor(obs['pixels']['wrist'], cv2.COLOR_RGB2BGR))
+        #cv2.imshow('Wrist Camera', cv2.cvtColor(obs['pixels']['wrist'], cv2.COLOR_RGB2BGR))
         cv2.waitKey(1)
 
 if __name__ == '__main__':

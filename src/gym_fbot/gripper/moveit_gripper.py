@@ -7,9 +7,9 @@ import rospy
 class MoveItGripper(BaseDorisGripper):
     def __init__(self) -> None:
         super(MoveItGripper, self).__init__()
-        self.move_group = MoveGroupCommander('gripper', robot_description='doris_arm/robot_description', ns='/doris_arm')
+        self.move_group = MoveGroupCommander('gripper', robot_description='wx200/robot_description', ns='/wx200')
         self.arm_joints = ['left_finger', 'right_finger']
-        self.trajectory_controller = rospy.Publisher('/doris_arm/gripper_controller/command', JointTrajectory)
+        self.trajectory_controller = rospy.Publisher('/wx200/gripper_controller/command', JointTrajectory)
 
     def set_gripper_joints(self, joints: np.ndarray):
         #self.move_group.stop()
